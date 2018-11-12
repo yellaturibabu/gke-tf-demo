@@ -4,6 +4,7 @@ pipeline {
   
   parameters {
   string defaultValue: 'tftest', description: '', name: 'tfauth', trim: true
+  string defaultValue: 'terraform.tfvars', description: '', name: 'tfvars', trim: true
 }
 
 
@@ -25,7 +26,7 @@ pipeline {
       steps {
      script {
        sh 'terraform init'
-          sh 'terraform plan -out myplan'
+          sh 'terraform plan -out myplan -var-file=${params.tfvars}'
             }
       }      
     }
@@ -41,7 +42,7 @@ pipeline {
     stage('TF Apply') {
       steps {
       script {
-          sh 'terraform apply -input=false myplan'
+          sh 'terraform apply -input=false myplan -var-file=${params.tfvars}'
         }
       }
     }
