@@ -4,6 +4,7 @@ pipeline {
   
   parameters {
   string defaultValue: 'tftest', description: '', name: 'tfauth', trim: true
+  string defaultValue: 'terraform.tfvars', description: '', name: 'tfvars', trim: true
 }
 
 
