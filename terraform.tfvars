@@ -1,1 +1,1 @@
-projectname=terraform-kube
+projectname="terraform-kube"
