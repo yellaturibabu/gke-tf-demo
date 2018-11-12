@@ -1,9 +1,14 @@
 pipeline {
 
   agent any
+  
+  parameters {
+  string defaultValue: 'tftest', description: '', name: 'tfauth', trim: true
+}
+
 
   environment {
-    SVC_ACCOUNT_KEY = credentials('tfqa')
+    SVC_ACCOUNT_KEY = credentials("${params.tfauth}")
   }
 
   stages {
@@ -42,5 +47,16 @@ pipeline {
     }
 
   } 
-
+    post {
+        //changed {}
+        //aborted {}
+        //failure {}
+        //success {}
+        //unstable {}
+        //notBuilt {}
+        always {
+            echo "Clearing workspace"
+            deleteDir() // Clean up the local workspace so we don't leave behind a mess, or sensitive files
+        }
+    }
 }
