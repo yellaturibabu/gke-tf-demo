@@ -3,7 +3,7 @@ pipeline {
   agent any
 
   environment {
-    SVC_ACCOUNT_KEY = credentials('tf2')
+    SVC_ACCOUNT_KEY = credentials('tfqa')
   }
 
   stages {
