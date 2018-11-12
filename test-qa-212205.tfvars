@@ -1,1 +1,1 @@
-projectname=test-qa-212205
+projectname="test-qa-212205"
