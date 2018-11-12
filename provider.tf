@@ -1,5 +1,5 @@
 provider "google" {
   credentials = "${file("./creds/serviceaccount.json")}"
-  project     = "test-qa-212205"
+  project     = "terraform-kube"
   region      = "europe-west1"
 }
