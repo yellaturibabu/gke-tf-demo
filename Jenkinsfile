@@ -42,7 +42,7 @@ pipeline {
     stage('TF Apply') {
       steps {
       script {
-         sh "terraform apply -input=false myplan -var-file=${params.tfvars}"
+         sh "terraform apply -input=false myplan "
         }
       }
     }
