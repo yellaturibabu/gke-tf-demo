@@ -1,8 +1,5 @@
 pipeline {
     agent any 
-    options {
-        ansiColor('xterm')
-    }
   parameters {
   credentials credentialType: 'org.jenkinsci.plugins.plaincredentials.impl.StringCredentialsImpl', defaultValue: '', description: 'select gcp project credentials and projects', name: 'gcpproject', required: true
 }
