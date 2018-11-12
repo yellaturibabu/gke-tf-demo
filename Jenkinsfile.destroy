@@ -19,13 +19,6 @@ pipeline {
     
         stage('plan') {
             steps {
-                    sh "terraform --version"
-                     if (fileExists(".terraform/terraform.tfstate")) {
-                     sh "rm -rf .terraform/terraform.tfstate"
-                       }
-                    if (fileExists("status")) {
-                    sh "rm status"
-                      }
                     sh 'terraform init -backend-config="bucket=$GCP_PROJECT" -backend-config="prefix=demo"  -backend-config="credentials=./creds/serviceaccount.json" '
                     sh 'terraform plan -destroy -out=plan.out -var-file=./tfvars/"$GCP_PROJECT.tfvars"'
                     sh "[ -f \"plan.out\" ] || echo 'plan.out file is missing'"
