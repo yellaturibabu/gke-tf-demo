@@ -1,53 +1,50 @@
 pipeline {
-
-  agent any
-  
+    agent any 
+    options {
+        ansiColor('xterm')
+    }
   parameters {
-  string defaultValue: 'tftest', description: '', name: 'tfauth', trim: true
-  string defaultValue: 'terraform.tfvars', description: '', name: 'tfvars', trim: true
+  credentials credentialType: 'org.jenkinsci.plugins.plaincredentials.impl.StringCredentialsImpl', defaultValue: '', description: 'select gcp project credentials and projects', name: 'gcpproject', required: true
 }
-
-
-  environment {
-    SVC_ACCOUNT_KEY = credentials("${params.tfauth}")
-  }
-
-  stages {
-
-    stage('Checkout') {
-      steps {
-        checkout scm
-        sh 'mkdir -p creds' 
-        sh 'echo $SVC_ACCOUNT_KEY | base64 -d > ./creds/serviceaccount.json'
-      }
-    }
-
-    stage('TF Plan') {
-      steps {
-     script {
-       sh 'terraform init'
-          sh "terraform plan -out myplan -var-file=${params.tfvars}"
+    environment {
+            SVC_ACCOUNT_KEY = credentials("${params.gcpproject}")
+            GCP_PROJECT = "${params.gcpproject}"
+         }
+    
+    stages {
+        stage('checkout') {
+            steps {
+                checkout scm
+                sh 'mkdir -p creds' 
+                sh 'echo $SVC_ACCOUNT_KEY | base64 -d > ./creds/serviceaccount.json'
             }
-      }      
-    }
-
-    stage('Approval') {
-      steps {
-        script {
-          def userInput = input(id: 'confirm', message: 'Apply Terraform?', parameters: [ [$class: 'BooleanParameterDefinition', defaultValue: false, description: 'Apply terraform', name: 'confirm'] ])
         }
-      }
-    }
-
-    stage('TF Apply') {
-      steps {
-      script {
-         sh "terraform apply -input=false myplan "
+    
+        stage('plan') {
+            steps {
+                    sh 'terraform init'
+                    sh 'terraform validate'
+                    sh "terraform plan -out=create.tfplan -var-file=tfvars/$GCP_PROJECT.tfvars"
+                    sh "[ -f \"create.tfplan\" ] || echo 'tfplan file is missing'"
+            }
         }
-      }
-    }
 
-  } 
+        stage('Approval') {
+            steps {
+                script {
+                def userInput = input(id: 'confirm', message: 'Apply Terraform?', parameters: [ [$class: 'BooleanParameterDefinition', defaultValue: false, description: 'Apply terraform', name: 'confirm'] ])
+                }
+            }   
+        }
+
+         stage('TF Apply') {
+            steps {
+                script {
+                sh "[ -f \"create.tfplan\" ] && terraform apply create.tfplan"
+                }
+            }
+        }      
+    }
     post {
         //changed {}
         //aborted {}
@@ -60,4 +57,5 @@ pipeline {
             deleteDir() // Clean up the local workspace so we don't leave behind a mess, or sensitive files
         }
     }
+
 }
