@@ -3,7 +3,7 @@ pipeline {
   agent any
 
   environment {
-    SVC_ACCOUNT_KEY = credentials('terraform-auth')
+    SVC_ACCOUNT_KEY = credentials('tfauth')
   }
 
   stages {
@@ -18,10 +18,10 @@ pipeline {
 
     stage('TF Plan') {
       steps {
-        container('terraform') {
+     script {
           sh 'terraform init'
           sh 'terraform plan -out myplan'
-        }
+            }
       }      
     }
 
@@ -35,7 +35,7 @@ pipeline {
 
     stage('TF Apply') {
       steps {
-        container('terraform') {
+      script {
           sh 'terraform apply -input=false myplan'
         }
       }
