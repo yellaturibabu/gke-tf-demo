@@ -26,7 +26,7 @@ pipeline {
       steps {
      script {
        sh 'terraform init'
-          sh 'terraform plan -out myplan -var-file=${params.tfvars}'
+          sh "terraform plan -out myplan -var-file=${params.tfvars}"
             }
       }      
     }
@@ -42,7 +42,7 @@ pipeline {
     stage('TF Apply') {
       steps {
       script {
-          sh 'terraform apply -input=false myplan -var-file=${params.tfvars}'
+         sh "terraform apply -input=false myplan -var-file=${params.tfvars}"
         }
       }
     }
