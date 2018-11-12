@@ -22,7 +22,7 @@ pipeline {
     
         stage('plan') {
             steps {
-                    sh  "terraform init -backend-config="bucket=devop-states" -backend-config="prefix=demo"  -backend-config="credentials=./creds/serviceaccount.json" 
+                    sh  ' terraform init -backend-config="bucket=devop-states" -backend-config="prefix=demo"  -backend-config="credentials=./creds/serviceaccount.json" '
                     sh 'terraform validate'
                     sh "terraform plan -out=create.tfplan -var-file=tfvars/$GCP_PROJECT.tfvars"
                     sh "[ -f \"create.tfplan\" ] || echo 'tfplan file is missing'"
